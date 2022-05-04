@@ -1,0 +1,15 @@
+;; Object trs/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "trs/"
+  :tables (list 
+   (semanticdb-table "trs.y"
+    :major-mode 'c-mode
+    :tags '(("lex" variable (:type ("Yylex" type (:type "class") nil nil)) nil [4767 4777]) ("rs" variable (:type ("RewriteSystem" type (:type "class") nil nil)) nil [4816 4833]) ("varlist" variable (:type ("List" type (:type "class") nil nil)) nil [4876 4889]) ("result" variable (:type ("Term" type (:type "class") nil nil)) nil [4931 4943]) ("engine" variable (:type ("Engine" type (:type "class") nil nil)) nil [4975 4989]) ("command" variable (:type ("Command" type (:type "class") nil nil)) nil [5029 5045]) ("getResult" function (:type ("Term" type (:type "class") nil nil)) nil [5054 5091]) ("getSymbol" function (:arguments (("name" variable (:type ("String" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5117 5129])) :type ("Symbol" type (:type "class") nil nil)) nil [5100 5177]) ("getRewriteSystem" function (:type ("RewriteSystem" type (:type "class") nil nil)) nil [5233 5282]) ("setRewriteSystem" function (:arguments (("rs" variable (:type ("RewriteSystem" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5313 5330])) :type "void") nil [5291 5350]) ("setEngine" function (:arguments (("engine" variable (:type ("Engine" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5374 5389])) :type "void") nil [5359 5417]) ("setCommand" function (:arguments (("command" variable (:type ("Command" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5442 5458])) :type "void") nil [5426 5487]) ("parse" function (:arguments (("is" variable (:type ("InputStream" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5545 5560])) :type "void") nil [5534 5648]) ("parse" function (:arguments (("rd" variable (:type ("Reader" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5706 5716])) :type "void") nil [5695 5804]) ("yylex" function (:type "int") nil [5813 5938]) ("yyerror" function (:arguments (("msg" variable (:type ("String" type (:type "class") nil nil)) (reparse-symbol arg-sub-list) [5962 5973])) :type "void") nil [5949 6004]))
+    :file "trs.y"
+    :pointmax 6007
+    )
+   )
+  :file "semantic.cache"
+  :semantic-tag-version "2.0beta2"
+  :semanticdb-version "2.0beta2"
+  )

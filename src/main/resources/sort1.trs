@@ -1,0 +1,13 @@
+sig max(2);z;s(1);min(2);sort(1);:!;nil;insert(2)
+rew
+   [x] max(z,x) -> x;
+   [x] max(x,z) -> x;
+   [x] min(z,x) -> z;
+   [x] min(x,z) -> z;
+   [x,y] max(s(x),s(y)) -> s(max(x,y));
+   [x,y] min(s(x),s(y)) -> s(min(x,y));
+   sort(nil) -> nil;
+   [x,y] sort(x:y) -> insert(x,sort(y));
+   [x] insert(x,nil) -> x:nil;
+   [x,y,t] insert(x,y:t) -> min(x,y) : insert(max(x,y),t)
+?  max(s(s(s(z))),x)

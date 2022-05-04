@@ -1,0 +1,10 @@
+sig +?;*!;z;s(1)
+rew [x,y] s(x) + y -> s(x + y);
+    [x,y] x + s(y) -> s(x + y);
+    [x] x + z -> x;
+    [x] z + x -> x;
+    [x,y] s(x) * y -> x * y + y;
+    [x,y] x * s(y) -> x * y + x;
+    [x] x * z -> z;
+    [x] z * x -> z
+? s(s(s(z))) * s(s(s(z))) + s(s(z))
