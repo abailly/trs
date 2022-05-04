@@ -1,0 +1,829 @@
+   0  $accept : rewrite $end
+
+   1  rewrite : rewrite signature
+   2          | rewrite rewrite_rules
+   3          | rewrite questions
+   4          | command
+   5          |
+
+   6  signature : SIGNATURE symbols
+
+   7  symbols : symbols SEMICOLON symbol assoc
+   8          | symbol assoc
+
+   9  symbol : ID LPAREN INTEGER RPAREN
+  10         | ID
+  11         | SYM LPAREN INTEGER RPAREN
+  12         | SYM
+
+  13  assoc : BANG
+  14        | QUESTION_MARK
+  15        |
+
+  16  rewrite_rules : RULES rules
+  17                | EQUATIONS equations
+
+  18  equations : equations SEMICOLON equation
+  19            | equation
+
+  20  equation : variables term EQ term
+
+  21  rules : rules SEMICOLON rule
+  22        | rule
+
+  23  rule : variables term REWRITE term
+
+  24  variables : LBRACKET variable_list RBRACKET
+  25            |
+
+  26  variable_list : variable_list COMMA ID
+  27                | ID
+
+  28  term : function
+  29       | ID
+  30       | LPAREN term RPAREN
+
+  31  function : ID LPAREN term_list RPAREN
+  32           | SYM LPAREN term_list RPAREN
+  33           | term LSYM term
+  34           | term RSYM term
+
+  35  term_list : term_list COMMA term
+  36            | term
+
+  37  questions : QUESTION_MARK term
+  38            | QUESTION_MARK term EQ term
+
+  39  command : CMD_QUIT
+  40          | CMD_LOAD
+  41          | CMD_SAVE
+  42          | CMD_CLEAR
+  43          | CMD_DEBUG
+
+state 0
+	$accept : . rewrite $end  (0)
+	rewrite : .  (5)
+
+	CMD_QUIT  shift 1
+	CMD_LOAD  shift 2
+	CMD_SAVE  shift 3
+	CMD_CLEAR  shift 4
+	CMD_DEBUG  shift 5
+	$end  reduce 5
+	QUESTION_MARK  reduce 5
+	SIGNATURE  reduce 5
+	RULES  reduce 5
+	EQUATIONS  reduce 5
+
+	rewrite  goto 6
+	command  goto 7
+
+
+state 1
+	command : CMD_QUIT .  (39)
+
+	.  reduce 39
+
+
+state 2
+	command : CMD_LOAD .  (40)
+
+	.  reduce 40
+
+
+state 3
+	command : CMD_SAVE .  (41)
+
+	.  reduce 41
+
+
+state 4
+	command : CMD_CLEAR .  (42)
+
+	.  reduce 42
+
+
+state 5
+	command : CMD_DEBUG .  (43)
+
+	.  reduce 43
+
+
+state 6
+	$accept : rewrite . $end  (0)
+	rewrite : rewrite . signature  (1)
+	rewrite : rewrite . rewrite_rules  (2)
+	rewrite : rewrite . questions  (3)
+
+	$end  accept
+	QUESTION_MARK  shift 8
+	SIGNATURE  shift 9
+	RULES  shift 10
+	EQUATIONS  shift 11
+	.  error
+
+	signature  goto 12
+	rewrite_rules  goto 13
+	questions  goto 14
+
+
+state 7
+	rewrite : command .  (4)
+
+	.  reduce 4
+
+
+state 8
+	questions : QUESTION_MARK . term  (37)
+	questions : QUESTION_MARK . term EQ term  (38)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 18
+	function  goto 19
+
+
+state 9
+	signature : SIGNATURE . symbols  (6)
+
+	ID  shift 20
+	SYM  shift 21
+	.  error
+
+	symbols  goto 22
+	symbol  goto 23
+
+
+state 10
+	rewrite_rules : RULES . rules  (16)
+	variables : .  (25)
+
+	LBRACKET  shift 24
+	ID  reduce 25
+	SYM  reduce 25
+	LPAREN  reduce 25
+
+	rules  goto 25
+	variables  goto 26
+	rule  goto 27
+
+
+state 11
+	rewrite_rules : EQUATIONS . equations  (17)
+	variables : .  (25)
+
+	LBRACKET  shift 24
+	ID  reduce 25
+	SYM  reduce 25
+	LPAREN  reduce 25
+
+	equations  goto 28
+	equation  goto 29
+	variables  goto 30
+
+
+state 12
+	rewrite : rewrite signature .  (1)
+
+	.  reduce 1
+
+
+state 13
+	rewrite : rewrite rewrite_rules .  (2)
+
+	.  reduce 2
+
+
+state 14
+	rewrite : rewrite questions .  (3)
+
+	.  reduce 3
+
+
+state 15
+	term : ID .  (29)
+	function : ID . LPAREN term_list RPAREN  (31)
+
+	LPAREN  shift 31
+	$end  reduce 29
+	LSYM  reduce 29
+	RSYM  reduce 29
+	RPAREN  reduce 29
+	REWRITE  reduce 29
+	COMMA  reduce 29
+	SEMICOLON  reduce 29
+	QUESTION_MARK  reduce 29
+	EQ  reduce 29
+	SIGNATURE  reduce 29
+	RULES  reduce 29
+	EQUATIONS  reduce 29
+
+
+state 16
+	function : SYM . LPAREN term_list RPAREN  (32)
+
+	LPAREN  shift 32
+	.  error
+
+
+state 17
+	term : LPAREN . term RPAREN  (30)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 33
+	function  goto 19
+
+
+state 18
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+	questions : QUESTION_MARK term .  (37)
+	questions : QUESTION_MARK term . EQ term  (38)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	EQ  shift 36
+	$end  reduce 37
+	QUESTION_MARK  reduce 37
+	SIGNATURE  reduce 37
+	RULES  reduce 37
+	EQUATIONS  reduce 37
+
+
+state 19
+	term : function .  (28)
+
+	.  reduce 28
+
+
+state 20
+	symbol : ID . LPAREN INTEGER RPAREN  (9)
+	symbol : ID .  (10)
+
+	LPAREN  shift 37
+	$end  reduce 10
+	SEMICOLON  reduce 10
+	QUESTION_MARK  reduce 10
+	BANG  reduce 10
+	SIGNATURE  reduce 10
+	RULES  reduce 10
+	EQUATIONS  reduce 10
+
+
+state 21
+	symbol : SYM . LPAREN INTEGER RPAREN  (11)
+	symbol : SYM .  (12)
+
+	LPAREN  shift 38
+	$end  reduce 12
+	SEMICOLON  reduce 12
+	QUESTION_MARK  reduce 12
+	BANG  reduce 12
+	SIGNATURE  reduce 12
+	RULES  reduce 12
+	EQUATIONS  reduce 12
+
+
+state 22
+	signature : SIGNATURE symbols .  (6)
+	symbols : symbols . SEMICOLON symbol assoc  (7)
+
+	SEMICOLON  shift 39
+	$end  reduce 6
+	QUESTION_MARK  reduce 6
+	SIGNATURE  reduce 6
+	RULES  reduce 6
+	EQUATIONS  reduce 6
+
+
+23: shift/reduce conflict (shift 40, reduce 15) on QUESTION_MARK
+state 23
+	symbols : symbol . assoc  (8)
+	assoc : .  (15)
+
+	QUESTION_MARK  shift 40
+	BANG  shift 41
+	$end  reduce 15
+	SEMICOLON  reduce 15
+	SIGNATURE  reduce 15
+	RULES  reduce 15
+	EQUATIONS  reduce 15
+
+	assoc  goto 42
+
+
+state 24
+	variables : LBRACKET . variable_list RBRACKET  (24)
+
+	ID  shift 43
+	.  error
+
+	variable_list  goto 44
+
+
+state 25
+	rewrite_rules : RULES rules .  (16)
+	rules : rules . SEMICOLON rule  (21)
+
+	SEMICOLON  shift 45
+	$end  reduce 16
+	QUESTION_MARK  reduce 16
+	SIGNATURE  reduce 16
+	RULES  reduce 16
+	EQUATIONS  reduce 16
+
+
+state 26
+	rule : variables . term REWRITE term  (23)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 46
+	function  goto 19
+
+
+state 27
+	rules : rule .  (22)
+
+	.  reduce 22
+
+
+state 28
+	rewrite_rules : EQUATIONS equations .  (17)
+	equations : equations . SEMICOLON equation  (18)
+
+	SEMICOLON  shift 47
+	$end  reduce 17
+	QUESTION_MARK  reduce 17
+	SIGNATURE  reduce 17
+	RULES  reduce 17
+	EQUATIONS  reduce 17
+
+
+state 29
+	equations : equation .  (19)
+
+	.  reduce 19
+
+
+state 30
+	equation : variables . term EQ term  (20)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 48
+	function  goto 19
+
+
+state 31
+	function : ID LPAREN . term_list RPAREN  (31)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 49
+	function  goto 19
+	term_list  goto 50
+
+
+state 32
+	function : SYM LPAREN . term_list RPAREN  (32)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 49
+	function  goto 19
+	term_list  goto 51
+
+
+state 33
+	term : LPAREN term . RPAREN  (30)
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	RPAREN  shift 52
+	.  error
+
+
+state 34
+	function : term LSYM . term  (33)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 53
+	function  goto 19
+
+
+state 35
+	function : term RSYM . term  (34)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 54
+	function  goto 19
+
+
+state 36
+	questions : QUESTION_MARK term EQ . term  (38)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 55
+	function  goto 19
+
+
+state 37
+	symbol : ID LPAREN . INTEGER RPAREN  (9)
+
+	INTEGER  shift 56
+	.  error
+
+
+state 38
+	symbol : SYM LPAREN . INTEGER RPAREN  (11)
+
+	INTEGER  shift 57
+	.  error
+
+
+state 39
+	symbols : symbols SEMICOLON . symbol assoc  (7)
+
+	ID  shift 20
+	SYM  shift 21
+	.  error
+
+	symbol  goto 58
+
+
+state 40
+	assoc : QUESTION_MARK .  (14)
+
+	.  reduce 14
+
+
+state 41
+	assoc : BANG .  (13)
+
+	.  reduce 13
+
+
+state 42
+	symbols : symbol assoc .  (8)
+
+	.  reduce 8
+
+
+state 43
+	variable_list : ID .  (27)
+
+	.  reduce 27
+
+
+state 44
+	variables : LBRACKET variable_list . RBRACKET  (24)
+	variable_list : variable_list . COMMA ID  (26)
+
+	RBRACKET  shift 59
+	COMMA  shift 60
+	.  error
+
+
+state 45
+	rules : rules SEMICOLON . rule  (21)
+	variables : .  (25)
+
+	LBRACKET  shift 24
+	ID  reduce 25
+	SYM  reduce 25
+	LPAREN  reduce 25
+
+	variables  goto 26
+	rule  goto 61
+
+
+state 46
+	rule : variables term . REWRITE term  (23)
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	REWRITE  shift 62
+	.  error
+
+
+state 47
+	equations : equations SEMICOLON . equation  (18)
+	variables : .  (25)
+
+	LBRACKET  shift 24
+	ID  reduce 25
+	SYM  reduce 25
+	LPAREN  reduce 25
+
+	equation  goto 63
+	variables  goto 30
+
+
+state 48
+	equation : variables term . EQ term  (20)
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	EQ  shift 64
+	.  error
+
+
+state 49
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+	term_list : term .  (36)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	RPAREN  reduce 36
+	COMMA  reduce 36
+
+
+state 50
+	function : ID LPAREN term_list . RPAREN  (31)
+	term_list : term_list . COMMA term  (35)
+
+	RPAREN  shift 65
+	COMMA  shift 66
+	.  error
+
+
+state 51
+	function : SYM LPAREN term_list . RPAREN  (32)
+	term_list : term_list . COMMA term  (35)
+
+	RPAREN  shift 67
+	COMMA  shift 66
+	.  error
+
+
+state 52
+	term : LPAREN term RPAREN .  (30)
+
+	.  reduce 30
+
+
+state 53
+	function : term . LSYM term  (33)
+	function : term LSYM term .  (33)
+	function : term . RSYM term  (34)
+
+	RSYM  shift 35
+	$end  reduce 33
+	LSYM  reduce 33
+	RPAREN  reduce 33
+	REWRITE  reduce 33
+	COMMA  reduce 33
+	SEMICOLON  reduce 33
+	QUESTION_MARK  reduce 33
+	EQ  reduce 33
+	SIGNATURE  reduce 33
+	RULES  reduce 33
+	EQUATIONS  reduce 33
+
+
+state 54
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+	function : term RSYM term .  (34)
+
+	RSYM  shift 35
+	$end  reduce 34
+	LSYM  reduce 34
+	RPAREN  reduce 34
+	REWRITE  reduce 34
+	COMMA  reduce 34
+	SEMICOLON  reduce 34
+	QUESTION_MARK  reduce 34
+	EQ  reduce 34
+	SIGNATURE  reduce 34
+	RULES  reduce 34
+	EQUATIONS  reduce 34
+
+
+state 55
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+	questions : QUESTION_MARK term EQ term .  (38)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	$end  reduce 38
+	QUESTION_MARK  reduce 38
+	SIGNATURE  reduce 38
+	RULES  reduce 38
+	EQUATIONS  reduce 38
+
+
+state 56
+	symbol : ID LPAREN INTEGER . RPAREN  (9)
+
+	RPAREN  shift 68
+	.  error
+
+
+state 57
+	symbol : SYM LPAREN INTEGER . RPAREN  (11)
+
+	RPAREN  shift 69
+	.  error
+
+
+58: shift/reduce conflict (shift 40, reduce 15) on QUESTION_MARK
+state 58
+	symbols : symbols SEMICOLON symbol . assoc  (7)
+	assoc : .  (15)
+
+	QUESTION_MARK  shift 40
+	BANG  shift 41
+	$end  reduce 15
+	SEMICOLON  reduce 15
+	SIGNATURE  reduce 15
+	RULES  reduce 15
+	EQUATIONS  reduce 15
+
+	assoc  goto 70
+
+
+state 59
+	variables : LBRACKET variable_list RBRACKET .  (24)
+
+	.  reduce 24
+
+
+state 60
+	variable_list : variable_list COMMA . ID  (26)
+
+	ID  shift 71
+	.  error
+
+
+state 61
+	rules : rules SEMICOLON rule .  (21)
+
+	.  reduce 21
+
+
+state 62
+	rule : variables term REWRITE . term  (23)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 72
+	function  goto 19
+
+
+state 63
+	equations : equations SEMICOLON equation .  (18)
+
+	.  reduce 18
+
+
+state 64
+	equation : variables term EQ . term  (20)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 73
+	function  goto 19
+
+
+state 65
+	function : ID LPAREN term_list RPAREN .  (31)
+
+	.  reduce 31
+
+
+state 66
+	term_list : term_list COMMA . term  (35)
+
+	ID  shift 15
+	SYM  shift 16
+	LPAREN  shift 17
+	.  error
+
+	term  goto 74
+	function  goto 19
+
+
+state 67
+	function : SYM LPAREN term_list RPAREN .  (32)
+
+	.  reduce 32
+
+
+state 68
+	symbol : ID LPAREN INTEGER RPAREN .  (9)
+
+	.  reduce 9
+
+
+state 69
+	symbol : SYM LPAREN INTEGER RPAREN .  (11)
+
+	.  reduce 11
+
+
+state 70
+	symbols : symbols SEMICOLON symbol assoc .  (7)
+
+	.  reduce 7
+
+
+state 71
+	variable_list : variable_list COMMA ID .  (26)
+
+	.  reduce 26
+
+
+state 72
+	rule : variables term REWRITE term .  (23)
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	$end  reduce 23
+	SEMICOLON  reduce 23
+	QUESTION_MARK  reduce 23
+	SIGNATURE  reduce 23
+	RULES  reduce 23
+	EQUATIONS  reduce 23
+
+
+state 73
+	equation : variables term EQ term .  (20)
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	$end  reduce 20
+	SEMICOLON  reduce 20
+	QUESTION_MARK  reduce 20
+	SIGNATURE  reduce 20
+	RULES  reduce 20
+	EQUATIONS  reduce 20
+
+
+state 74
+	function : term . LSYM term  (33)
+	function : term . RSYM term  (34)
+	term_list : term_list COMMA term .  (35)
+
+	LSYM  shift 34
+	RSYM  shift 35
+	RPAREN  reduce 35
+	COMMA  reduce 35
+
+
+State 23 contains 1 shift/reduce conflict.
+State 58 contains 1 shift/reduce conflict.
+
+
+28 terminals, 18 nonterminals
+44 grammar rules, 75 states

@@ -1,0 +1,14 @@
+sig -->!;      # implies
+    not(1);  # negation
+    t;f      # true and false constants
+rew 
+# rules for implication
+    t --> f -> f;
+    t --> t -> t;
+    [x] f --> x -> t;
+# rules for negation
+    not(t) -> f;
+    not(f) -> t;
+# excluded middle (??)
+    [x] not(not(x)) -> x
+? t --> not(f --> not(t --> f))

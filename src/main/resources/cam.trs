@@ -1,0 +1,9 @@
+sig Id;Fst;Snd;App;:?;~;*;\(1);^
+rew 
+[x] Id : x -> x;
+[x,y,z] (x ~ y):z -> x :(y:z);
+[x,y] Fst : x * y -> x;
+[x,y] Snd : x * y -> y;
+[x,y,z] (x ^ y) : z -> (x:z)*(y:z);
+[x,y] App : (x*y) -> x :y ;
+[x,y,z] \(x) : y : z -> x:(y*z)

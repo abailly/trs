@@ -1,0 +1,159 @@
+/************************************************************************
+* Lexical analyzer for Term Rewrite System grammar
+* Author : Arnaud Bailly
+* Version : $Id: Yylex,v 1.8 2003/04/25 15:22:06 bailly Exp $^
+**************************************************************************/
+
+package trs;
+
+import java.util.StringTokenizer;
+import java.util.List;
+import java.util.ArrayList;
+
+%%
+%line
+%char
+%integer
+%state INCMD  INSIG
+
+%{
+  /* the parser object we use */
+  Yyparser parser; 
+
+  public int line() {
+	return yyline;
+}
+
+public int col() {
+return yychar;
+}
+
+%}
+
+octal=[0-7]
+large=[A-Z]
+small=[a-z]
+digit=[0-9]
+hexit=({digit}|[a-fA-F])
+hexadecimal={hexit}+
+decimal={digit}+
+symbol=["#$%&*+?/:<>@\\^|-~"\"] 
+special=[\"!?(),;=.]  
+graphic=({small}|{large}|{symbol}|{digit}|{special}|"'") 
+idchar=({small}|{large}|{digit}|"'") 
+idfirst=({small}|{large})
+charesc=[abfnrtv\\\&\"\'] 
+ht=\x09 
+lf=\x0a 
+ff=\x0c 
+cr=\x0d 
+sp=" " 
+whitechar=[ \t\n\b\f\r] 
+line_terminator=({lf}|{cr}|{cr}{lf})  
+space={sp} 
+escape=\\({charesc}|{decimal}|o{octal}|x{hexadecimal}) 
+gap=\\{whitechar}+\\ 
+id={idfirst}{idchar}* 
+sym={symbol}{symbol}*
+cmd={graphic}+
+
+%%
+
+"sig" {  return Yyparser.SIGNATURE;}
+"rew"      {  return Yyparser.RULES;}
+"eqs"      {  return Yyparser.EQUATIONS;}
+"var"      {return Yyparser.VARIABLES;}
+"->" {return Yyparser.REWRITE;}
+";"     {return Yyparser.SEMICOLON;}
+","      {return Yyparser.COMMA;}
+"?"      {return Yyparser.QUESTION_MARK;}
+"("      {return Yyparser.LPAREN;}
+")"      {return Yyparser.RPAREN;}
+"["      {return Yyparser.LBRACKET;}
+"]"      {return Yyparser.RBRACKET;}
+"."{line_terminator}      {return YYEOF;}
+"!"      {return Yyparser.BANG; }
+"="      {return Yyparser.EQ; }
+
+"!"{idchar}({sp}+{cmd})* { 
+	char cmd = yytext().charAt(1);
+	/* parse arguments and create array */
+	String[] args = null;
+	if(yytext().length() > 2) {
+	  List l = new ArrayList();
+	  StringTokenizer st = new StringTokenizer(yytext().substring(2)," ");
+	  while(st.hasMoreTokens()) 
+	     l.add(st.nextToken());
+	 System.err.println(l);
+	  args = (String[])l.toArray(new String[0]);
+	}
+	/* return command */
+	switch(cmd) {
+	case 'q':
+		return Yyparser.CMD_QUIT;
+       case 'l':
+	if(args == null)
+		return -1;
+         parser.yylval = args[0];
+	 return Yyparser.CMD_LOAD;
+       case 's':
+	if(args == null)
+		return -1;
+         parser.yylval = args[0];
+	 return Yyparser.CMD_SAVE;
+       case 'c':
+	 return Yyparser.CMD_CLEAR;
+       case 'd':
+	 return Yyparser.CMD_DEBUG;
+	default:
+           return -1;
+	}	
+}
+
+{id}    {
+  parser.yylval = yytext();
+  return Yyparser.ID;
+ }
+
+{sym}     {
+ /* try to find assoc of symbol in parser */
+ Symbol sym = parser.getSymbol(yytext());
+ System.err.println("Reading symbol "+yytext());
+ parser.yylval = yytext();
+ if(sym != null) { /* symbol registered in signature, return its associativity */
+    switch(sym.getAssociativity()) {
+case Signature.RIGHT_ASSOC :
+         return Yyparser.RSYM;
+   case Signature.LEFT_ASSOC:
+         return Yyparser.LSYM;
+  default:
+  return Yyparser.SYM;
+	}
+}  
+ else return Yyparser.SYM; /* non associative operator */
+}
+
+0(o|O){octal}       { 
+  parser.yylval= new Integer(Integer.parseInt(yytext(),8));
+  return Yyparser.INTEGER;
+}
+
+0(x|X){hexadecimal}   { 
+  parser.yylval= new Integer(Integer.parseInt(yytext().substring(2),16));
+  return Yyparser.INTEGER;
+}
+
+{decimal}             { 
+  parser.yylval= new Integer(Integer.parseInt(yytext()));
+  return Yyparser.INTEGER;
+}
+
+#.*{line_terminator}                  {return yylex();} 
+
+{whitechar}+                                   {return yylex();} 
+
+. {System.err.println("Illegal input to Yylex, exiting"); yy_error(0,true); }
+
+
+
+
